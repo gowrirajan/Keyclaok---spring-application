@@ -1,0 +1,47 @@
+openapi: 3.0.0
+info:
+  title: Keycloak Authentication API
+  version: 1.0.0
+  description: API for Keycloak authentication and token generation
+servers:
+  - url: https://wicked-roses-dig.loca.lt
+paths:
+  /login:
+    get:
+      summary: Redirect to Keycloak for login
+      description: Initiates the login process by redirecting to Keycloak.
+      responses:
+        '302':
+          description: Redirects to Keycloak for authentication
+  /callback:
+    get:
+      summary: Handle Keycloak callback
+      description: Receives the authorization code from Keycloak and exchanges it for tokens.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          description: Authorization code received from Keycloak
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returns the ID token and other information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    description: The access token received from Keycloak
+                  id_token:
+                    type: string
+                    description: The ID token received from Keycloak
+                  refresh_token:
+                    type: string
+                    description: The refresh token received from Keycloak
+        '400':
+          description: Bad request, invalid authorization code
+        '401':
+          description: Unauthorized, invalid client credentials
